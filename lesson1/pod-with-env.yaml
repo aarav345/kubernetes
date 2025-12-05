@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: env-pod
+
+spec:
+  containers:
+    - name: env-container
+      image: busybox
+      command: ["sh", "-c", "echo Hello $USER_NAME! Your role is $USER_ROLE && sleep 3600"]
+      env:
+        - name: USER_NAME
+          value: "Kubernetes learner"
+        
+        - name: USER_ROLE
+          value: "student"
