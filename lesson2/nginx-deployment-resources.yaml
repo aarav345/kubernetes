@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-resources
+  labels:
+    app: nginx
+    tier: frontend
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+      tier: frontend
+  
+
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: frontend
+
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:1.26
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "64Mi" # "64Mi" = 64 Mebibytes
+              cpu: "250m" # "250m" = 0.25 CPU cores, "1000m" = 1 CPU core
+            limits:
+              memory: "128Mi"
+              cpu: "500m"

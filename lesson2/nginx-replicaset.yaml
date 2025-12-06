@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: nginx-replicaset
+  labels:
+    app: nginx
+    tier: frontend
+
+
+spec:
+  replicas: 5  # We want 3 pod replicas
+  selector:
+    matchLabels:
+      app: nginx # ReplicaSet manages pods with this 
+      tier: frontend
+  
+  template:
+    metadata:
+      labels:
+        app: nginx # Pod created will have these labels
+        tier: frontend
+    
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:1.25
+          ports:
+            - containerPort: 80
