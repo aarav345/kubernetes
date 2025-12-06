@@ -2,17 +2,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-recreate
+  labels:
+    app: nginx-recreate
+    tier: frontend
+
 spec:
   replicas: 3
   strategy:
     type: Recreate  # Kill all old pods, then create new ones
   selector:
     matchLabels:
-      app: nginx-recreate
+        app: nginx-recreate
+        tier: frontend
+
   template:
     metadata:
       labels:
         app: nginx-recreate
+        tier: frontend
     spec:
       containers:
       - name: nginx
