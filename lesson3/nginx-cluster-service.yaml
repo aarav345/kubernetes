@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: ClusterIP  # Default Type
+  selector:
+    app: nginx # Must match pod labels
+  ports:
+  - protocol: TCP
+    port: 80         # Service Port ( What client connects to )
+    targetPort: 80   # Pod Port ( Where nginx is listening )
