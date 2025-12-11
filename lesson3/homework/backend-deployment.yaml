@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: hashicorp/http-echo
+        imagePullPolicy: IfNotPresent
+        args:
+        - "-text=Hello from backend!"
+        ports:
+        - containerPort: 5678
+      
+    

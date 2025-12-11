@@ -754,7 +754,8 @@ kubectl get svc headless-service
 # headless-service   ClusterIP   None         <none>        80/TCP    10s
 
 # DNS returns Pod IPs directly (not Service IP)
-kubectl run test --image=busybox --rm -it -- nslookup headless-service
+kubectl run test --image=busybox --restart=Never --command -- sh -c "sleep 3600"
+kubectl exec -it test -- nslookup headless-service
 
 # Shows multiple A records, one for each Pod!
 ```
@@ -815,7 +816,8 @@ kubectl get svc <service-name>
 kubectl get endpoints <service-name>
 
 # Test DNS resolution
-kubectl run test --image=busybox --rm -it -- nslookup <service-name>
+kubectl run test --image=busybox --restart=Never --command -- sh -c "sleep 3600"
+kubectl exec -it test -- nslookup <service-name>
 
 # Test Service connectivity
 kubectl run test --image=curlimages/curl --rm -it -- curl http://<service-name>
@@ -1037,7 +1039,7 @@ kubectl scale deployment backend --replicas=5
 # From frontend pod, make 20 requests
 kubectl exec -it <frontend-pod> -- sh
 for i in $(seq 1 20); do
-  wget -qO- http://backend-service
+  curl http://backend-service
   echo ""
 done
 
