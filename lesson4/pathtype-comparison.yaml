@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pathtype-demo
+
+
+spec:
+  rules:
+  - http:
+      paths:
+      # Prefix matching
+      - path: /prefix
+        pathType: Prefix
+        backend:
+          service:
+            name: app1-service
+            port:
+              number: 80
+
+        # Exact matching
+      - path: /exact
+        pathType: Exact
+        backend:
+          service:
+            name: app2-service
+            port:
+              number: 80
+
