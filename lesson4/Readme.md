@@ -976,8 +976,6 @@ curl -v http://$(minikube ip)
 # Follow redirects
 curl -L http://$(minikube ip)
 
-# Test from within cluster
-kubectl run test --rm -it --image=curlimages/curl -- curl http://app1-service
 ```
 
 ### TLS/Secrets
