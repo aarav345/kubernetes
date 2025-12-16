@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-panel-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: admin-panel
+  template:
+    metadata:
+      labels:
+        app: admin-panel
+    spec:
+      containers:
+      - name: admin-panel
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from admin panel"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-panel-service
+spec:
+  selector:
+    app: admin-panel
+  ports:
+  - port: 80
+    targetPort: 5678

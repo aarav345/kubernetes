@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tennant1-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tennant1
+  template:
+    metadata:
+      labels:
+        app: tennant1
+    spec:
+      containers:
+      - name: tennant1
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from tennant1"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tennant1-service
+spec:
+  selector:
+    app: tennant1
+  ports:
+  - port: 80
+    targetPort: 5678
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tennant2-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tennant2
+  template:
+    metadata:
+      labels:
+        app: tennant2
+    spec:
+      containers:
+      - name: tennant2
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from tennant2"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tennant2-service
+spec:
+  selector:
+    app: tennant2
+  ports:
+  - port: 80
+    targetPort: 5678
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tennant3-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tennant3
+  template:
+    metadata:
+      labels:
+        app: tennant3
+    spec:
+      containers:
+      - name: tennant3
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from tennant3"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tennant3-service
+spec:
+  selector:
+    app: tennant3
+  ports:
+  - port: 80
+    targetPort: 5678

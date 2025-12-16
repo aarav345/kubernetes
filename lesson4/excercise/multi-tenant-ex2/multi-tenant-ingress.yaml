@@ -1,0 +1,39 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: multi-tenant-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+  rules:
+  - host: tenant1.myapp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: tennant1-service
+            port:
+              number: 80
+  - host: tenant2.myapp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: tennant2-service
+            port:
+              number: 80
+  - host: tenant3.myapp.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: 
+            name: tennant3-service
+            port:
+              number: 80

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from users"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  selector:
+    app: users
+  ports:
+  - port: 80
+    targetPort: 5678
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product
+        image: hashicorp/http-echo
+        args:
+        - "-text=Response from products"
+        ports:
+        - containerPort: 5678
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+spec:
+  selector:
+    app: product
+  ports:
+  - port: 80
+    targetPort: 5678
