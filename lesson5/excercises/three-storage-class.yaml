@@ -1,0 +1,69 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-ssd
+provisioner: k8s.io/minikube-hostpath # Minikube provisioner
+parameters:
+  type: pd-ssd
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: fast-ssd-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: fast-ssd
+  resources:
+    requests:
+      storage: 2Gi
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard-hdd
+provisioner: k8s.io/minikube-hostpath # Minikube provisioner
+parameters:
+  type: pd-standard
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: standard-hdd-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard-hdd
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: slow-archive
+provisioner: k8s.io/minikube-hostpath # Minikube provisioner
+parameters:
+  type: directory-recursive
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: slow-archive-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: slow-archive
+  resources:
+    requests:
+      storage: 2Gi

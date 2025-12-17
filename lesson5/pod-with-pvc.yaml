@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pvc-pod
+spec:
+  containers:
+  - name: app
+    image: busybox
+    command:
+    - /bin/sh
+    - -c
+    - |
+      echo "Persistent data written at $(date)" > /data/persistent.txt
+      cat /data/persistent.txt
+      sleep 3600
+    volumeMounts:
+    - name: pvc-storage
+      mountPath: /data
+  
+  volumes:
+  - name: pvc-storage
+    persistentVolumeClaim:
+      claimName: my-pvc # Reference the PVC

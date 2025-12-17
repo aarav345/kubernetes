@@ -1,0 +1,9 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast-storage
+provisioner: k8s.io/minikube-hostpath # Minikube provisioner
+parameters:
+  type: pd-ssd
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
