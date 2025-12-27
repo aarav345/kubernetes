@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immutable-config
+data:
+  version: "1.0.0"
+  release: "stable"
+immutable: true  # Cannot be modified!

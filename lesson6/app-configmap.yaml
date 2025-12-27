@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  # Simple key-value pairs
+  app.name: "MY APPLICATION"
+  app.mode: "PRODUCTION"
+  log.level: "info"
+
+  # Multi-line values
+  app.properties: |
+    server.port=8080
+    server.host=0.0.0.0
+    database.pool.size=10
+    cache.enabled=true
+
+
+  # JSON configuration
+  features.json: |
+    {
+      "feature1": true,
+      "feature2": false,
+      "maxUsers": 1000
+    }
+  
+  # script file
+  startup.sh: |
+    #!/bin/bash
+    echo "Starting application..."
+    java -jar /app/application.jar
