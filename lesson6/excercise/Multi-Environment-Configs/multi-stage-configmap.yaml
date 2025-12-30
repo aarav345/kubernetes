@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dev-config
+data:
+  APP_ENV: "development"
+  DATABASE_URL: "postgres://dev_user:dev_pass@dev-db:5432/dev_db"
+  LOG_LEVEL: "debug"
+  FEATURE_NEW_DASHBOARD: "true"
+  FEATURE_BETA_API: "true"
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: stage-config
+data:
+  APP_ENV: "development"
+  DATABASE_URL: "postgres://stage_user:stage_pass@stage-db:5432/stage_db"
+  LOG_LEVEL: "info"
+  FEATURE_NEW_DASHBOARD: "true"
+  FEATURE_BETA_API: "true"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prod-config
+data:
+  APP_ENV: "production"
+  DATABASE_URL: "postgres://prod_user:prod_pass@prod-db:5432/prod_db"
+  LOG_LEVEL: "error"
+  FEATURE_NEW_DASHBOARD: "false"
+  FEATURE_BETA_API: "false"

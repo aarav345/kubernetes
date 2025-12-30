@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+spec:
+  type: ClusterIP
+  selector:
+    app: my-app
+  ports:
+  - port: 80
+    targetPort: 3000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-deployment
+  labels:
+    app: my-app
+
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+        - name: my-app
+          image: node:18-alpine
+          command: ["sh", "-c"]
+          args:
+            - |
+              echo "DB_HOST=$DB_HOST";
+              echo "STRIPE_API_KEY=$STRIPE_API_KEY";
+              node -e "require('http').createServer((_,res)=>res.end('OK')).listen(3000)"
+          ports:
+          - containerPort: 3000
+
+          envFrom:
+          - configMapRef:
+              name: app-config
+          - secretRef:
+              name: db-secret
+          - secretRef:
+              name: api-secret
