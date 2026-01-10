@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+data:
+  # Primary configuration
+  primary.conf: |
+    listen_addresses = '*'
+    max_connections = 100
+    shared_buffers = 128MB
+    wal_level = replica
+    max_wal_senders = 10
+    max_replication_slots = 10
+    hot_standby = on
+    wal_keep_segments = 8
+
+  # Replica configuration  
+  replica.conf: |
+    listen_addresses = '*'
+    max_connections = 100
+    shared_buffers = 128MB
+    hot_standby = on
+    hot_standby_feedback = on
+
+  # pg_hba.conf for authentication
+  pg_hba.conf: |
+    # TYPE  DATABASE        USER            ADDRESS                 METHOD
+    local   all             all                                     trust
+    host    all             all             127.0.0.1/32            trust
+    host    all             all             ::1/128                 trust
+    host    all             all             0.0.0.0/0               md5
+    host    replication     replicator      0.0.0.0/0               md5
+
+  # Initialization script
+  init.sh: |
+    #!/bin/bash
+    set -e
+    
+    export PGDATA=/var/lib/postgresql/data/pgdata
+    
+    # Determine if this is the primary (postgres-0) or replica
+    if [[ "$HOSTNAME" == "postgres-0" ]]; then
+      echo "🔵 Initializing PRIMARY node: $HOSTNAME"
+      
+      # Initialize database if not exists
+      if [ ! -s "$PGDATA/PG_VERSION" ]; then
+        echo "Initializing database..."
+        initdb -D "$PGDATA"
+        
+        # Configure primary
+        cat /config/primary.conf >> "$PGDATA/postgresql.conf"
+        cp /config/pg_hba.conf "$PGDATA/pg_hba.conf"
+        
+        # Start postgres temporarily to create replication user
+        pg_ctl -D "$PGDATA" -w start
+        
+        psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+          CREATE USER replicator WITH REPLICATION ENCRYPTED PASSWORD '$REPLICATION_PASSWORD';
+          CREATE DATABASE $POSTGRES_DB;
+        EOSQL
+        
+        pg_ctl -D "$PGDATA" -m fast -w stop
+        echo "✅ Primary initialized"
+      fi
+      
+    else
+      echo "🟢 Initializing REPLICA node: $HOSTNAME"
+      
+      # Wait for primary to be ready
+      until pg_isready -h postgres-0.postgres -p 5432 -U "$POSTGRES_USER"; do
+        echo "Waiting for primary postgres-0 to be ready..."
+        sleep 2
+      done
+      
+      # Initialize replica from primary if not exists
+      if [ ! -s "$PGDATA/PG_VERSION" ]; then
+        echo "Cloning from primary..."
+        PGPASSWORD="$REPLICATION_PASSWORD" pg_basebackup \
+          -h postgres-0.postgres \
+          -D "$PGDATA" \
+          -U replicator \
+          -v \
+          -P \
+          -X stream \
+          -R
+        
+        # Add replica configuration
+        cat /config/replica.conf >> "$PGDATA/postgresql.conf"
+        
+        echo "✅ Replica initialized from primary"
+      fi
+    fi
